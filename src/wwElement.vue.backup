@@ -5,8 +5,8 @@
       :style="indicatorStyle"
     />
     
-    <div v-if="showLabel" :class="labelClasses">
-      <span v-if="labelText">{{ labelText }}</span>
+    <div v-if="content.showLabel" :class="labelClasses">
+      <span v-if="content.labelText">{{ content.labelText }}</span>
       <span v-else>{{ Math.round(normalizedValue) }}%</span>
     </div>
   </div>
@@ -19,13 +19,24 @@ import { cn } from './cn.js'
 export default {
   name: 'WewebProgress',
   props: {
-        // Individual props will be auto-generated based on the component type
-        // This is a placeholder that will be manually refined per component
-    },
+    content: {
+      type: Object,
+      required: true,
+      default: () => ({
+        value: 0,
+        max: 100,
+        size: 'default',
+        showLabel: false,
+        labelText: '',
+        color: 'primary',
+        customClasses: ''
+      })
+    }
+  },
   setup(props) {
     const normalizedValue = computed(() => {
-      const value = Math.min(Math.max(props.value || 0, 0), props.max || 100)
-      return (value / (props.max || 100)) * 100
+      const value = Math.min(Math.max(props.content.value || 0, 0), props.content.max || 100)
+      return (value / (props.content.max || 100)) * 100
     })
 
     const sizeClasses = {
@@ -44,13 +55,13 @@ export default {
 
     const progressClasses = computed(() => cn(
       "relative w-full overflow-hidden rounded-full bg-secondary",
-      sizeClasses[props.size] || sizeClasses.default,
-      props.customClasses
+      sizeClasses[props.content.size] || sizeClasses.default,
+      props.content.customClasses
     ))
 
     const indicatorClasses = computed(() => cn(
       "h-full w-full flex-1 transition-all duration-300 ease-in-out",
-      colorClasses[props.color] || colorClasses.primary
+      colorClasses[props.content.color] || colorClasses.primary
     ))
 
     const indicatorStyle = computed(() => ({
